@@ -1,0 +1,27 @@
+{
+    "port": 5000,
+    "multer": {
+        "storage": "memory"
+    },
+    "discord": {
+        "intents": [
+            "Guilds",
+            "GuildMessages",
+            "MessageContent"
+        ],
+        "restVersion":10,
+        "timeout":60000,
+        "backoff":500,
+        "exponentialBackoffCoefficient":1.2,
+        "attempts":100,
+        "chunkSize":10,
+        "maxChunkSizeAllowed":24,
+        "channels": [
+            "1047921563447590994",
+            "1047922054831284255"
+        ]
+    },
+    "virtualDirectory":{
+        "storage":"file"
+    }
+}
