@@ -368,7 +368,56 @@ app.get('/virtualDirectory', async(req, res) => {
         res.status(500).json({
             message: 'Failed to retrieve virtual directory structure',
             success: false,
-            error: error.message
+            error: error
+        });
+    }
+});
+
+function deleteById(id, virtualDirectory) {
+    try{
+        if (virtualDirectory.children) {
+            const index = virtualDirectory.children.findIndex(child => child.id === id);
+            if (index !== -1) {
+                virtualDirectory.children.splice(index, 1);
+                return true;
+            } else {
+                for (const child of virtualDirectory.children) {
+                    if (deleteById(id, child)) {
+                        return true; 
+                    }
+                }
+            }
+        }
+        return false;
+    }catch(error){
+        console.error("Could not delete by id:", error);
+        throw error;
+    }
+}
+
+app.post('/delete',async(req,res)=>{
+    try{
+        const virtualDirectory = await getVirtualDirectory();
+        const identifier = req.body.identifier;
+
+        deleteById(identifier,virtualDirectory);
+
+        await setVirtualDirectory(virtualDirectory);
+
+        console.log("resource deleted successfully");
+        
+        res.status(200).json({
+            message: 'resource deleted successfully',
+            success: true,
+            virtualDirectory: virtualDirectory
+        });
+    }
+    catch(error){
+        console.error("could not delete the requested resource: ",error);
+        res.status(500).json({
+            message: 'could not delete the requested resource',
+            success: false,
+            error: error
         });
     }
 });
